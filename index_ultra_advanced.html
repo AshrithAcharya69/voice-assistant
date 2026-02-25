@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ELSA 4.0 — Ultra-Advanced Neural AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Exo+2:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style_ultra_advanced.css">
+</head>
+
+<body>
+
+    <!-- Animated background -->
+    <div class="bg-grid"></div>
+    <div class="bg-glow"></div>
+    <canvas id="particleCanvas"></canvas>
+
+    <div class="app-shell">
+
+        <!-- ===== SIDEBAR ===== -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-orb">
+                    <div class="orb-ring r1"></div>
+                    <div class="orb-ring r2"></div>
+                    <div class="orb-ring r3"></div>
+                    <div class="orb-core">E</div>
+                </div>
+                <div class="logo-text">
+                    <span class="logo-name">ELSA</span>
+                    <span class="logo-ver">v4.0 ULTRA</span>
+                </div>
+            </div>
+
+            <!-- AI Model Selector -->
+            <div class="sidebar-section">
+                <div class="section-label">AI CORE</div>
+                <div class="model-cards">
+                    <div class="model-card active" data-model="auto" onclick="elsa.setModel('auto', this)">
+                        <div class="model-icon"><i class="fas fa-infinity"></i></div>
+                        <div class="model-name">Auto</div>
+                        <div class="model-desc">Best available</div>
+                    </div>
+                    <div class="model-card" data-model="claude" onclick="elsa.setModel('claude', this)">
+                        <div class="model-icon"><i class="fas fa-atom"></i></div>
+                        <div class="model-name">Claude</div>
+                        <div class="model-desc">Anthropic</div>
+                    </div>
+                    <div class="model-card" data-model="gpt" onclick="elsa.setModel('gpt', this)">
+                        <div class="model-icon"><i class="fas fa-brain"></i></div>
+                        <div class="model-name">GPT-4o</div>
+                        <div class="model-desc">OpenAI</div>
+                    </div>
+                    <div class="model-card" data-model="gemini" onclick="elsa.setModel('gemini', this)">
+                        <div class="model-icon"><i class="fas fa-gem"></i></div>
+                        <div class="model-name">Gemini</div>
+                        <div class="model-desc">Google</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature Toggles -->
+            <div class="sidebar-section">
+                <div class="section-label">FEATURES</div>
+                <div class="toggle-list">
+                    <label class="toggle-row">
+                    <span class="toggle-icon"><i class="fas fa-eye"></i></span>
+                    <span class="toggle-label">Vision AI</span>
+                    <div class="pill-toggle" id="visionToggle" onclick="elsa.toggleFeature('vision', this)"></div>
+                </label>
+                    <label class="toggle-row">
+                    <span class="toggle-icon"><i class="fas fa-bolt"></i></span>
+                    <span class="toggle-label">Voice Reply</span>
+                    <div class="pill-toggle on" id="voiceReplyToggle" onclick="elsa.toggleFeature('voiceReply', this)"></div>
+                </label>
+                    <label class="toggle-row">
+                    <span class="toggle-icon"><i class="fas fa-database"></i></span>
+                    <span class="toggle-label">Context</span>
+                    <div class="pill-toggle on" id="contextToggle" onclick="elsa.toggleFeature('context', this)"></div>
+                </label>
+                    <label class="toggle-row">
+                    <span class="toggle-icon"><i class="fas fa-stream"></i></span>
+                    <span class="toggle-label">Auto Action</span>
+                    <div class="pill-toggle on" id="autoToggle" onclick="elsa.toggleFeature('auto', this)"></div>
+                </label>
+                </div>
+                <!-- Voice select -->
+                <div class="voice-select-row" style="margin-top:8px">
+                    <div class="section-label" style="font-size:10px;margin-bottom:4px;"><i class="fas fa-volume-up"></i> VOICE</div>
+                    <select id="voiceSelect" style="width:100%;background:rgba(0,0,0,0.4);border:1px solid rgba(0,255,249,0.2);color:#aaa;border-radius:6px;padding:5px 8px;font-size:11px;" onchange=""></select>
+                </div>
+            </div>
+
+            <!-- System Status -->
+            <div class="sidebar-section">
+                <div class="section-label">SYSTEM</div>
+                <div class="sys-stats" id="sysStats">
+                    <div class="stat-row">
+                        <span class="stat-lbl">Backend</span>
+                        <span class="stat-val" id="backendStatus">Checking...</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-lbl">AI Models</span>
+                        <span class="stat-val" id="aiModelCount">—</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-lbl">OS</span>
+                        <span class="stat-val" id="osInfo">—</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Action Grid -->
+            <div class="sidebar-section">
+                <div class="section-label">QUICK ACTIONS</div>
+                <div class="qa-grid">
+                    <button class="qa-btn" onclick="elsa.quickAction('time')"><i class="fas fa-clock"></i><span>Time</span></button>
+                    <button class="qa-btn" onclick="elsa.quickAction('weather')"><i class="fas fa-cloud-sun"></i><span>Weather</span></button>
+                    <button class="qa-btn" onclick="elsa.quickAction('news')"><i class="fas fa-newspaper"></i><span>News</span></button>
+                    <button class="qa-btn" onclick="elsa.quickAction('music')"><i class="fas fa-music"></i><span>Music</span></button>
+                    <button class="qa-btn" onclick="elsa.quickAction('screenshot')"><i class="fas fa-camera"></i><span>Screenshot</span></button>
+                    <button class="qa-btn" id="screenRecordBtn" onclick="elsa.toggleScreenRecord()"><i class="fas fa-record-vinyl"></i><span>Record</span></button>
+                    <button class="qa-btn" onclick="elsa.quickAction('sysinfo')"><i class="fas fa-microchip"></i><span>Sys Info</span></button>
+                    <button class="qa-btn" onclick="elsa.quickAction('clear')"><i class="fas fa-trash-alt"></i><span>Clear</span></button>
+                    <button class="qa-btn danger" onclick="elsa.quickAction('shutdown_menu')"><i class="fas fa-power-off"></i><span>Power</span></button>
+                </div>
+            </div>
+
+            <div class="sidebar-footer">
+                <span>ELSA Neural System</span>
+                <span>Built for Intelligence</span>
+            </div>
+        </aside>
+
+        <!-- ===== MAIN CONTENT ===== -->
+        <main class="main-content">
+
+            <!-- Top Bar -->
+            <header class="topbar">
+                <button class="sidebar-toggle" onclick="document.getElementById('sidebar').classList.toggle('collapsed')">
+                <i class="fas fa-bars"></i>
+            </button>
+
+                <div class="topbar-center">
+                    <div class="vis-container">
+                        <canvas id="waveform" width="300" height="50"></canvas>
+                    </div>
+                    <div class="status-badge" id="statusBadge">
+                        <div class="status-dot pulse"></div>
+                        <span id="statusText">Ready</span>
+                    </div>
+                </div>
+
+                <div class="topbar-right">
+                    <div class="model-chip" id="currentModelChip">
+                        <i class="fas fa-brain"></i>
+                        <span id="currentModelName">Auto</span>
+                    </div>
+                    <!-- Mode chip -->
+                    <div class="mode-chip" id="modeChip">🤖 AI Mode</div>
+                    <!-- Mode toggle -->
+                    <button class="icon-btn mode-toggle-btn" id="modeToggleBtn" onclick="elsa.toggleMode()" title="Toggle AI / Normal Mode">
+                        <i class="fas fa-toggle-on"></i>
+                    </button>
+                    <button class="icon-btn" onclick="elsa.showAppsPanel()" title="Desktop Apps">
+                    <i class="fas fa-th-large"></i>
+                </button>
+                    <button class="icon-btn" onclick="elsa.showSearchPanel()" title="Search">
+                    <i class="fas fa-search"></i>
+                </button>
+                </div>
+            </header>
+
+            <!-- Conversation Area -->
+            <section class="conversation-area" id="conversationArea">
+                <!-- Welcome Screen -->
+                <div class="welcome-screen" id="welcomeScreen">
+                    <div class="welcome-orb">
+                        <div class="w-ring wr1"></div>
+                        <div class="w-ring wr2"></div>
+                        <div class="w-ring wr3"></div>
+                        <div class="w-core">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                    </div>
+                    <h2 class="welcome-title">Hello, I'm <span class="highlight-text">ELSA</span></h2>
+                    <p class="welcome-sub">Ultra-Advanced Neural AI Assistant — Ready for anything</p>
+
+                    <div class="capability-chips">
+                        <span class="chip"><i class="fas fa-comments"></i> Talk on any topic</span>
+                        <span class="chip"><i class="fas fa-desktop"></i> Open desktop apps</span>
+                        <span class="chip"><i class="fas fa-globe"></i> Open any website</span>
+                        <span class="chip"><i class="fab fa-youtube"></i> Play YouTube</span>
+                        <span class="chip"><i class="fab fa-wikipedia-w"></i> Search Wikipedia</span>
+                        <span class="chip"><i class="fas fa-search"></i> Google/Edge/Chrome</span>
+                        <span class="chip"><i class="fas fa-camera"></i> Screenshot</span>
+                        <span class="chip"><i class="fas fa-record-vinyl"></i> Screen Record</span>
+                        <span class="chip"><i class="fas fa-robot"></i> AI Chat (Claude/GPT)</span>
+                        <span class="chip"><i class="fas fa-code"></i> Write code</span>
+                        <span class="chip"><i class="fas fa-power-off"></i> Shutdown/Restart</span>
+                        <span class="chip"><i class="fas fa-image"></i> Generate Images</span>
+                    </div>
+
+                    <div class="suggestion-grid">
+                        <div class="suggestion" onclick="elsa.loadSuggestion(this)">
+                            <i class="fas fa-laptop-code"></i>
+                            <span>"Open Chrome and search Python tutorials"</span>
+                        </div>
+                        <div class="suggestion" onclick="elsa.loadSuggestion(this)">
+                            <i class="fas fa-music"></i>
+                            <span>"Play Believer by Imagine Dragons"</span>
+                        </div>
+                        <div class="suggestion" onclick="elsa.loadSuggestion(this)">
+                            <i class="fab fa-wikipedia-w"></i>
+                            <span>"Search Wikipedia Artificial Intelligence"</span>
+                        </div>
+                        <div class="suggestion" onclick="elsa.loadSuggestion(this)">
+                            <i class="fas fa-camera"></i>
+                            <span>"Take a screenshot"</span>
+                        </div>
+                        <div class="suggestion" onclick="elsa.loadSuggestion(this)">
+                            <i class="fas fa-search"></i>
+                            <span>"Search Edge for latest news"</span>
+                        </div>
+                        <div class="suggestion" onclick="elsa.loadSuggestion(this)">
+                            <i class="fas fa-microchip"></i>
+                            <span>"Show me my system information"</span>
+                        </div>
+                        <div class="suggestion" onclick="elsa.loadSuggestion(this)">
+                            <i class="fas fa-robot"></i>
+                            <span>"Ask ChatGPT about machine learning"</span>
+                        </div>
+                        <div class="suggestion" onclick="elsa.loadSuggestion(this)">
+                            <i class="fas fa-record-vinyl"></i>
+                            <span>"Record screen"</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Messages -->
+                <div class="messages" id="messages"></div>
+            </section>
+
+            <!-- Input Area -->
+            <footer class="input-area">
+                <!-- Attachment Preview -->
+                <div class="attachment-preview" id="attachmentPreview"></div>
+
+                <div class="input-bar">
+                    <!-- File Uploads -->
+                    <input type="file" id="imageInput" accept="image/*" multiple style="display:none" onchange="elsa.handleImageUpload(event)">
+                    <input type="file" id="docInput" accept=".txt,.pdf,.docx,.md,.csv" multiple style="display:none" onchange="elsa.handleDocUpload(event)">
+
+                    <button class="input-btn" onclick="document.getElementById('imageInput').click()" title="Upload Image">
+                    <i class="fas fa-image"></i>
+                </button>
+                    <button class="input-btn" onclick="document.getElementById('docInput').click()" title="Upload Document">
+                    <i class="fas fa-paperclip"></i>
+                </button>
+
+                    <textarea id="textInput" class="text-input" placeholder="Ask ELSA anything... (voice, commands, questions, coding, anything!)" rows="1" onkeydown="elsa.handleKey(event)" oninput="elsa.autoResize(this)"></textarea>
+
+                    <!-- Manual Mic -->
+                    <button class="mic-btn" id="micBtn" onclick="elsa.toggleMic()" title="🎤 Manual Voice — Click once, speak, auto-sends">
+                        <i class="fas fa-microphone"></i>
+                        <div class="mic-pulse"></div>
+                    </button>
+
+                    <!-- AUTO Voice Mode (always listening) -->
+                    <button class="auto-voice-btn" id="autoVoiceBtn" onclick="elsa.toggleAutoVoice()" title="📡 Auto Voice — Always listening, hands-free">
+                        <i class="fas fa-assistive-listening-systems"></i>
+                    </button>
+
+                    <!-- Stop Speaking -->
+                    <button class="input-btn" onclick="elsa.stopSpeaking()" title="🔇 Stop Speaking">
+                        <i class="fas fa-volume-mute"></i>
+                    </button>
+
+                    <button class="send-btn" id="sendBtn" onclick="elsa.sendMessage()" title="Send (Enter)">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div class="input-hint">
+                    <i class="fas fa-microphone" style="color:#0ff"></i> <b>Manual</b> = click mic → speak → auto-sends &nbsp;·&nbsp;
+                    <i class="fas fa-assistive-listening-systems" style="color:#f0f"></i> <b>Auto</b> = always listening &nbsp;·&nbsp; Try: <i>"Open Chrome"</i> · <i>"Play Believer"</i> · <i>"Take screenshot"</i> · <i>"Search Wikipedia AI"</i>
+                </div>
+            </footer>
+        </main>
+
+    </div>
+
+    <!-- ===== MODALS ===== -->
+
+    <!-- Apps Panel -->
+    <div class="panel-overlay" id="appsPanel">
+        <div class="panel">
+            <div class="panel-header">
+                <h3><i class="fas fa-th-large"></i> Desktop Applications</h3>
+                <button class="close-panel" onclick="elsa.closePanel('appsPanel')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="panel-body">
+                <div class="app-category">
+                    <div class="cat-label">Browsers</div>
+                    <div class="app-grid">
+                        <button class="app-tile" onclick="elsa.openApp('chrome')"><i class="fab fa-chrome"></i><span>Chrome</span></button>
+                        <button class="app-tile" onclick="elsa.openApp('edge')"><i class="fab fa-edge"></i><span>Edge</span></button>
+                        <button class="app-tile" onclick="elsa.openApp('firefox')"><i class="fab fa-firefox"></i><span>Firefox</span></button>
+                        <button class="app-tile" onclick="elsa.openApp('brave')"><i class="fas fa-shield-alt"></i><span>Brave</span></button>
+                    </div>
+                </div>
+                <div class="app-category">
+                    <div class="cat-label">Microsoft Office</div>
+                    <div class="app-grid">
+                        <button class="app-tile" onclick="elsa.openApp('word')"><i class="fas fa-file-word"></i><span>Word</span></button>
+                        <button class="app-tile" onclick="elsa.openApp('excel')"><i class="fas fa-file-excel"></i><span>Excel</span></button>
+                        <button class="app-tile" onclick="elsa.openApp('powerpoint')"><i class="fas fa-file-powerpoint"></i><span>PowerPoint</span></button>
+                        <button class="app-tile" onclick="elsa.openApp('outlook')"><i class="fas fa-envelope"></i><span>Outlook</span></button>
+                        <button class="app-tile" onclick="elsa.openApp('teams')"><i class="fas fa-users"></i><span>Teams</span></button>
+                        <button class="app-tile" onclick="elsa.openApp('onenote')"><i class="fas fa-sticky-note"></i><span>OneNote</span></button>
+                    </div>
+                </div>
+                <div class="app-category">
+                    <div class="cat-label">Development</div>
+                    <div class="app-grid">
+                        <button class="app-tile" onclick="elsa.openApp('vscode')"><i class="fas fa-code"></i><span>VS Code</span></button>
+                        <button class="app-tile" onclick="elsa.openApp('pycharm')"><i class="fab fa-python"></i><span>PyCharm</span></button>
+                        <button class="app-tile" onclick="elsa.openApp('cmd')"><i class="fas fa-terminal"></i><span>CMD</span></button>
+                        <button class="app-tile" onclick="elsa.openApp('powershell')"><i class="fas fa-terminal"></i><span>PowerShell</span></button>
+                        <button class="app-tile" onclick="elsa.openApp('git bash')"><i class="fab fa-git-alt"></i><span>Git Bash</span></button>
+                        <button class="app-tile" onclick="elsa.openApp('postman')"><i class="fas fa-satellite-dish"></i><span>Postman</span></button>
+                    </div>
+                </div>
+                <div class="app-category">
+                    <div class="cat-label">Communication</div>
+                    <div class="app-grid">
+                        <button class="app-tile" onclick="elsa.openApp('discord')"><i class="fab fa-discord"></i><span>Discord</span></button>
+                        <button class="app-tile" onclick="elsa.openApp('slack')"><i class="fab fa-slack"></i><span>Slack</span></button>
+                        <button class="app-tile" onclick="elsa.openApp('telegram')"><i class="fab fa-telegram"></i><span>Telegram</span></button>
+                        <button class="app-tile" onclick="elsa.openApp('zoom')"><i class="fas fa-video"></i><span>Zoom</span></button>
+                        <button class="app-tile" onclick="elsa.openApp('whatsapp')"><i class="fab fa-whatsapp"></i><span>WhatsApp</span></button>
+                        <button class="app-tile" onclick="elsa.openApp('skype')"><i class="fab fa-skype"></i><span>Skype</span></button>
+                    </div>
+                </div>
+                <div class="app-category">
+                    <div class="cat-label">Media & Entertainment</div>
+                    <div class="app-grid">
+                        <button class="app-tile" onclick="elsa.openApp('spotify')"><i class="fab fa-spotify"></i><span>Spotify</span></button>
+                        <button class="app-tile" onclick="elsa.openApp('vlc')"><i class="fas fa-play-circle"></i><span>VLC</span></button>
+                        <button class="app-tile" onclick="elsa.openApp('steam')"><i class="fab fa-steam"></i><span>Steam</span></button>
+                        <button class="app-tile" onclick="elsa.openApp('obs studio')"><i class="fas fa-video"></i><span>OBS</span></button>
+                        <button class="app-tile" onclick="elsa.openApp('photoshop')"><i class="fas fa-paint-brush"></i><span>Photoshop</span></button>
+                        <button class="app-tile" onclick="elsa.openApp('gimp')"><i class="fas fa-palette"></i><span>GIMP</span></button>
+                    </div>
+                </div>
+                <div class="app-category">
+                    <div class="cat-label">System Tools</div>
+                    <div class="app-grid">
+                        <button class="app-tile" onclick="elsa.openApp('notepad')"><i class="fas fa-file-alt"></i><span>Notepad</span></button>
+                        <button class="app-tile" onclick="elsa.openApp('calculator')"><i class="fas fa-calculator"></i><span>Calculator</span></button>
+                        <button class="app-tile" onclick="elsa.openApp('paint')"><i class="fas fa-pencil-ruler"></i><span>Paint</span></button>
+                        <button class="app-tile" onclick="elsa.openApp('file explorer')"><i class="fas fa-folder-open"></i><span>Files</span></button>
+                        <button class="app-tile" onclick="elsa.openApp('task manager')"><i class="fas fa-tasks"></i><span>Task Mgr</span></button>
+                        <button class="app-tile" onclick="elsa.openApp('settings')"><i class="fas fa-cog"></i><span>Settings</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Panel -->
+    <div class="panel-overlay" id="searchPanel">
+        <div class="panel panel-sm">
+            <div class="panel-header">
+                <h3><i class="fas fa-search"></i> Search & Open</h3>
+                <button class="close-panel" onclick="elsa.closePanel('searchPanel')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="panel-body">
+                <div class="search-row">
+                    <input type="text" id="searchQuery" class="search-field" placeholder="Enter search query...">
+                </div>
+                <div class="search-engines">
+                    <button class="engine-btn" onclick="elsa.searchEngine('google')">
+                    <i class="fab fa-google"></i> Google
+                </button>
+                    <button class="engine-btn" onclick="elsa.searchEngine('wikipedia')">
+                    <i class="fab fa-wikipedia-w"></i> Wikipedia
+                </button>
+                    <button class="engine-btn" onclick="elsa.searchEngine('youtube')">
+                    <i class="fab fa-youtube"></i> YouTube
+                </button>
+                    <button class="engine-btn" onclick="elsa.searchEngine('edge')">
+                    <i class="fab fa-edge"></i> Edge/Bing
+                </button>
+                    <button class="engine-btn" onclick="elsa.searchEngine('chatgpt')">
+                    <i class="fas fa-robot"></i> ChatGPT
+                </button>
+                    <button class="engine-btn" onclick="elsa.searchEngine('claude')">
+                    <i class="fas fa-atom"></i> Claude AI
+                </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Power Menu -->
+    <div class="panel-overlay" id="powerPanel">
+        <div class="panel panel-xs">
+            <div class="panel-header">
+                <h3><i class="fas fa-power-off"></i> Power Options</h3>
+                <button class="close-panel" onclick="elsa.closePanel('powerPanel')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="panel-body">
+                <div class="power-grid">
+                    <button class="power-btn shutdown" onclick="elsa.powerAction('shutdown')">
+                    <i class="fas fa-power-off"></i>
+                    <span>Shutdown</span>
+                    <small>in 5 seconds</small>
+                </button>
+                    <button class="power-btn restart" onclick="elsa.powerAction('restart')">
+                    <i class="fas fa-redo-alt"></i>
+                    <span>Restart</span>
+                    <small>in 5 seconds</small>
+                </button>
+                    <button class="power-btn sleep" onclick="elsa.powerAction('sleep')">
+                    <i class="fas fa-moon"></i>
+                    <span>Sleep</span>
+                    <small>standby mode</small>
+                </button>
+                    <button class="power-btn lock" onclick="elsa.powerAction('lock')">
+                    <i class="fas fa-lock"></i>
+                    <span>Lock</span>
+                    <small>lock screen</small>
+                </button>
+                    <button class="power-btn cancel" onclick="elsa.powerAction('cancel')">
+                    <i class="fas fa-times-circle"></i>
+                    <span>Cancel</span>
+                    <small>abort shutdown</small>
+                </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Screenshot Modal -->
+    <div class="screenshot-modal" id="screenshotModal">
+        <div class="ss-inner">
+            <div class="ss-header">
+                <span>Screenshot</span>
+                <button onclick="document.getElementById('screenshotModal').classList.remove('active')"><i class="fas fa-times"></i></button>
+            </div>
+            <img id="screenshotImg" src="" alt="Screenshot">
+            <a id="screenshotDownload" download="elsa_screenshot.png" class="download-btn">
+                <i class="fas fa-download"></i> Download
+            </a>
+        </div>
+    </div>
+
+    <script src="app_ultra_advanced.js"></script>
+</body>
+
+</html>
