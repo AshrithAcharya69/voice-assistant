@@ -1,0 +1,32 @@
+# ╔══════════════════════════════════════════════════════╗
+# ║         ELSA 4.0 — Python Requirements              ║
+# ║   pip install -r requirements.txt                   ║
+# ╚══════════════════════════════════════════════════════╝
+
+# ── CORE (Flask Server) ──────────────────────────────
+flask
+flask-cors
+python-dotenv
+requests
+
+# ── AI PROVIDERS ────────────────────────────────────
+anthropic
+openai
+google-generativeai
+
+# ── SCREEN RECORDING & SCREENSHOT ───────────────────
+pillow
+opencv-python
+pyautogui
+
+# ── SYSTEM INFO ─────────────────────────────────────
+psutil
+
+# ── LOCAL TEXT TO SPEECH ────────────────────────────
+pyttsx3
+
+# ── IMAGE GENERATION ────────────────────────────────
+fal-client
+
+# ── EXTRAS (auto-installed with above) ──────────────
+numpy
